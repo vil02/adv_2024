@@ -1,0 +1,47 @@
+---
+name: python_test
+
+'on':
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  python_test:
+    runs-on: ${{matrix.os}}
+    timeout-minutes: 90
+    strategy:
+      fail-fast: false
+      matrix:
+        os:
+          - ubuntu-20.04
+        python-version: ['3.10', 3.11]
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python ${{matrix.python-version}}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{matrix.python-version}}
+
+      - name: Install dependencies
+        run: |
+          curl -sSL https://install.python-poetry.org | python3 -
+          poetry install --with dev
+
+      - name: Lint with ruff
+        run: |
+          poetry run ruff check
+
+      - name: Run liter
+        run: |
+          ./check_all_python_scripts.sh
+
+      - name: Test with pytest
+        run: |
+          poetry run pytest -n 2
+...

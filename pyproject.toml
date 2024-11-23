@@ -1,0 +1,29 @@
+[tool.poetry]
+name = "adv-2024"
+version = "1.0.0"
+description = "solutions of Advent of Code 2024"
+authors = ["piotr.idzik <vil02_adv@10g.pl>"]
+readme = "README.md"
+packages = [{include = "solutions"}]
+
+[tool.poetry.dependencies]
+python = ">=3.10,<4.0.0"
+
+[tool.poetry.group.dev]
+optional = true
+
+[tool.poetry.group.dev.dependencies]
+pytest = "8.3.1"
+pytest-xdist = "3.5.0"
+pylint = "3.2.0"
+flake8 = "7.1.1"
+flake8-bugbear = "24.10.31"
+flake8-pytest-style = "2.0.0"
+ruff = "0.7.4"
+coverage = "7.5.0"
+black = "24.1"
+mypy = "1.13.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
