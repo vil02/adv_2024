@@ -33,13 +33,9 @@ jobs:
           curl -sSL https://install.python-poetry.org | python3 -
           poetry install --with dev
 
-      - name: Lint with ruff
-        run: |
-          poetry run ruff check
-
       - name: Run liter
         run: |
-          ./check_all_python_scripts.sh
+          ./check_all_python_files.sh
 
       - name: Test with pytest
         run: |
