@@ -56,7 +56,7 @@ def _read_all_inputs(in_day_id: int, in_keys: set[str]) -> dict[str, str]:
     return res
 
 
-SolveOutput: typing.TypeAlias = int | str
+type SolveOutput = int | str
 
 
 def _extract_expected(
