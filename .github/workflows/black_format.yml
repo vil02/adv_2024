@@ -10,7 +10,7 @@ name: black_format
 
 jobs:
   black_format:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
       - uses: psf/black@24.10.0
