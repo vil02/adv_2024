@@ -28,6 +28,14 @@ def test_is_safe_a(in_list: list[int], expected: int) -> None:
         ([1, 3, 2, 4, 5], True),
         ([8, 6, 4, 4, 1], True),
         ([1, 3, 6, 7, 9], True),
+        ([48, 46, 47, 49, 51, 54, 56], True),
+        ([1, 1, 2, 3, 4, 5], True),
+        ([1, 2, 3, 4, 5, 5], True),
+        ([5, 1, 2, 3, 4, 5], True),
+        ([1, 4, 3, 2, 1], True),
+        ([1, 6, 7, 8, 9], True),
+        ([1, 2, 3, 4, 3], True),
+        ([9, 8, 7, 6, 7], True),
     ],
 )
 def test_is_safe_b(in_list: list[int], expected: int) -> None:
