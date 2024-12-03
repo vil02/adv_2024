@@ -4,9 +4,7 @@ from . import test_utils as tu
 
 _INPUTS = tu.get_inputs(3, {"small_a", "small_b", "p"})
 
-test_solve_a_single = _INPUTS.get_test(
-    sol.solve_a, {"small_a": 161, "small_b": 161, "p": 174103751}
-)
-test_solve_b_single = _INPUTS.get_test(
-    sol.solve_b, {"small_a": 161, "small_b": 48, "p": 100411201}
+test_solve_a, test_solve_b = _INPUTS.get_tests(
+    (sol.solve_a, sol.solve_b),
+    {"small_a": (161, 161), "small_b": (161, 48), "p": (174103751, 100411201)},
 )
