@@ -6,7 +6,6 @@ Words = dict[Pos, str]
 
 def _parse_input(in_str: str) -> tuple[Words, int, int]:
     res = {}
-    x_size = 0
     lines = in_str.splitlines()
     y_size = len(lines)
     x_size = len(lines[0])
