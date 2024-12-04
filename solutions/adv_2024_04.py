@@ -29,6 +29,23 @@ def _shift(pos: Pos, shift: Pos) -> Pos:
     return pos[0] + shift[0], pos[1] + shift[1]
 
 
+def _is_at_pos_in_dir(words: Words, pos: Pos, search_dir: Pos, word: str) -> bool:
+    if not word:
+        return True
+    return words.get(pos, "") == word[0] and _is_at_pos_in_dir(
+        words, _shift(pos, search_dir), search_dir, word[1:]
+    )
+
+
+def _count_at_pos(words: Words, pos: Pos, in_word: str) -> int:
+    return sum(1 for _ in _DIRS if _is_at_pos_in_dir(words, pos, _, in_word))
+
+
+def solve_a(in_str: str) -> int:
+    words = _parse_input(in_str)
+    return sum(_count_at_pos(words, _, "XMAS") for _ in words)
+
+
 def _extract(words: Words, pos: Pos, search_dir: Pos, size: int) -> str:
     assert size >= 0
     if size == 0:
@@ -36,15 +53,6 @@ def _extract(words: Words, pos: Pos, search_dir: Pos, size: int) -> str:
     return words.get(pos, "") + _extract(
         words, _shift(pos, search_dir), search_dir, size - 1
     )
-
-
-def _count_at_pos(words: Words, pos: Pos, in_word: str) -> int:
-    return sum(1 for _ in _DIRS if _extract(words, pos, _, len(in_word)) == in_word)
-
-
-def solve_a(in_str: str) -> int:
-    words = _parse_input(in_str)
-    return sum(_count_at_pos(words, _, "XMAS") for _ in words)
 
 
 def _is_x_mas(words: Words, pos: Pos) -> bool:
