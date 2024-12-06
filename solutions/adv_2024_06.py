@@ -26,7 +26,6 @@ _W = (-1, 0)
 _E = (1, 0)
 
 _ROTATED = {_N: _E, _E: _S, _S: _W, _W: _N}
-_DIRS = list(_ROTATED.keys())
 
 
 def _is_on(pos: Pair, limits: Pair) -> bool:
@@ -44,14 +43,16 @@ def _move(walls: SetPairs, pos: Pair, in_dir: Pair) -> tuple[Pair, Pair]:
     return _shift(pos, in_dir), in_dir
 
 
-def _simulate(walls: SetPairs, pos: Pair, in_dir: Pair, limits: Pair) -> set[Pair]:
-    visited = set()
+def _simulate(
+    walls: SetPairs, pos: Pair, in_dir: Pair, limits: Pair
+) -> dict[Pair, list[Pair]]:
+    states: dict[Pair, list[Pair]] = {}
     cur_pos = pos
     cur_dir = in_dir
     while _is_on(cur_pos, limits):
-        visited.add(cur_pos)
+        states[cur_pos] = states.get(cur_pos, []) + [cur_dir]
         cur_pos, cur_dir = _move(walls, cur_pos, cur_dir)
-    return visited
+    return states
 
 
 def solve_a(in_str: str) -> int:
@@ -71,10 +72,12 @@ def _does_loop(walls: SetPairs, pos: Pair, in_dir: Pair, limits: Pair) -> bool:
     return False
 
 
-def _get_potential(visited: SetPairs, walls: SetPairs, limits: Pair) -> SetPairs:
+def _potential_obstacles(
+    states: dict[Pair, list[Pair]], walls: SetPairs, limits: Pair
+) -> SetPairs:
     res = set()
-    for _p in visited:
-        for _d in _DIRS:
+    for _p, _dirs in states.items():
+        for _d in _dirs:
             pos = _shift(_p, _d)
             if _is_on(pos, limits) and pos not in walls:
                 res.add(pos)
@@ -83,8 +86,9 @@ def _get_potential(visited: SetPairs, walls: SetPairs, limits: Pair) -> SetPairs
 
 def solve_b(in_str: str) -> int:
     walls, start_pos, limits = _parse_input(in_str)
-    tmp = _simulate(walls, start_pos, _N, limits)
-    potential = _get_potential(tmp, walls, limits)
+    potential = _potential_obstacles(
+        _simulate(walls, start_pos, _N, limits), walls, limits
+    )
     return sum(
         1
         for _ in potential - {start_pos}
