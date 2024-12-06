@@ -31,10 +31,9 @@ def _parse_input(in_str: str) -> tuple[dict[int, set[int]], list[list[int]]]:
 def _is_correct(in_pages: list[int], in_rules: dict[int, set[int]]) -> bool:
     pages_set = set(in_pages)
     page_to_ind = {_p: _i for _i, _p in enumerate(in_pages)}
-    for cur_pos, cur_page in enumerate(in_pages):
-        if cur_page in in_rules and any(
-            page_to_ind[hi] < cur_pos for hi in in_rules[cur_page] & pages_set
-        ):
+    for cur_ind, cur_page in enumerate(in_pages):
+        pages_after = in_rules.get(cur_page, set()) & pages_set
+        if any(page_to_ind[hi] < cur_ind for hi in pages_after):
             return False
     return True
 
