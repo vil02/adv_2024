@@ -4,8 +4,7 @@ Words = dict[Pos, str]
 
 def _parse_input(in_str: str) -> Words:
     res = {}
-    lines = in_str.splitlines()
-    for y_pos, line in enumerate(lines):
+    for y_pos, line in enumerate(in_str.splitlines()):
         for x_pos, char in enumerate(line):
             res[(x_pos, y_pos)] = char
     return res
