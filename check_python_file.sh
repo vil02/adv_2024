@@ -19,7 +19,6 @@ do
     }
 
     mypy_output=$(poetry run mypy "${cur_file}" 2>&1) || {
-        printf "Checking \"%s\"\n" "${cur_file}"
         printf "Checking with mypy:\n%s\n" "${mypy_output}"
         exit_code=1
     }
