@@ -63,12 +63,38 @@ def _checksum(data: list[int]) -> int:
     return sum(id * val for id, val in enumerate(data) if not _is_empty(data, id))
 
 
-def _file_begin(data: list[int], end_pos: int) -> int:
-    cur_pos = end_pos
-    assert not _is_empty(data, cur_pos)
-    while data[cur_pos] == data[end_pos]:
-        cur_pos -= 1
-    return cur_pos + 1
+class _Blocks:
+    def __init__(self, in_raw: list[int]) -> None:
+        self._raw = in_raw
+        self._empty: set[int] = {
+            _ for _ in range(len(self._raw)) if _is_empty(self._raw, _)
+        }
+
+    def move_piece(self, used_pos: int, free_pos: int) -> None:
+        _move_piece(self._raw, used_pos, free_pos)
+        self._empty.remove(free_pos)
+        self._empty.add(used_pos)
+
+    def move_file(self, file_start: int, file_size: int, dest_start: int) -> None:
+        for _ in range(file_size):
+            self.move_piece(file_start + _, dest_start + _)
+
+    def find_last_used(self, search_start: int) -> int:
+        return _find_last_used(self._raw, search_start)
+
+    def file_begin(self, end_pos: int) -> int:
+        cur_pos = end_pos
+        assert not _is_empty(self._raw, cur_pos)
+        while self._raw[cur_pos] == self._raw[end_pos]:
+            cur_pos -= 1
+        return cur_pos + 1
+
+    def find_free_big_enough(self, size: int, search_end: int) -> int:
+        for cur_pos in sorted(_ for _ in self._empty if _ < search_end):
+            if _get_free_space_size(self._raw, cur_pos) >= size:
+                assert isinstance(cur_pos, int)
+                return cur_pos
+        return len(self._raw)
 
 
 def _get_free_space_size(data: list[int], pos: int) -> int:
@@ -80,38 +106,17 @@ def _get_free_space_size(data: list[int], pos: int) -> int:
     return size
 
 
-def _move_file(
-    data: list[int], file_start: int, file_size: int, dest_start: int
-) -> None:
-    for _ in range(file_size):
-        _move_piece(data, file_start + _, dest_start + _)
-
-
-def _find_free_big_enough(
-    data: list[int], size: int, search_start: int, search_end: int
-) -> int:
-    cur_pos = search_start
-    while cur_pos < search_end:
-        if _is_empty(data, cur_pos):
-            free_size = _get_free_space_size(data, cur_pos)
-            if free_size >= size:
-                return cur_pos
-            cur_pos += free_size
-        else:
-            cur_pos += 1
-    return len(data)
-
-
 def _move_b(data: list[int]) -> None:
-    end_pos = _find_last_used(data, len(data) - 1)
+    blocks = _Blocks(data)
+    end_pos = blocks.find_last_used(len(data) - 1)
     while end_pos > 0:
-        start_pos = _file_begin(data, end_pos)
+        start_pos = blocks.file_begin(end_pos)
         file_size = end_pos - start_pos + 1
-        free_pos = _find_free_big_enough(data, file_size, 0, start_pos)
+        free_pos = blocks.find_free_big_enough(file_size, start_pos)
         if free_pos < start_pos:
-            _move_file(data, start_pos, file_size, free_pos)
+            blocks.move_file(start_pos, file_size, free_pos)
 
-        end_pos = _find_last_used(data, start_pos - 1)
+        end_pos = blocks.find_last_used(start_pos - 1)
 
 
 def _get_solve(move: typing.Callable[[list[int]], None]) -> typing.Callable[[str], int]:
