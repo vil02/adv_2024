@@ -27,7 +27,7 @@ def _shift(pos: Pair, shift: Pair) -> Pair:
     return pos[0] + shift[0], pos[1] + shift[1]
 
 
-def _get_antinodes_a(pos_a: Pair, pos_b: Pair, limits) -> PosSet:
+def _get_antinodes_a(pos_a: Pair, pos_b: Pair, limits: Pair) -> PosSet:
     res = set()
     new_pos = _shift(pos_b, _diff(pos_a, pos_b))
     if _is_in(new_pos, limits):
