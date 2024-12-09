@@ -1,3 +1,4 @@
+import bisect
 import typing
 
 _EMPTY = -1
@@ -66,14 +67,17 @@ def _checksum(data: list[int]) -> int:
 class _Blocks:
     def __init__(self, in_raw: list[int]) -> None:
         self._raw = in_raw
-        self._empty: set[int] = {
+        self._empty: list[int] = [
             _ for _ in range(len(self._raw)) if _is_empty(self._raw, _)
-        }
+        ]
 
     def move_piece(self, used_pos: int, free_pos: int) -> None:
         _move_piece(self._raw, used_pos, free_pos)
-        self._empty.remove(free_pos)
-        self._empty.add(used_pos)
+
+        pos_to_remove = bisect.bisect_left(self._empty, free_pos)
+        self._empty.pop(pos_to_remove)
+        pos_to_insert = bisect.bisect_left(self._empty, used_pos)
+        self._empty.insert(pos_to_insert, used_pos)
 
     def move_file(self, file_start: int, file_size: int, dest_start: int) -> None:
         for _ in range(file_size):
@@ -89,10 +93,9 @@ class _Blocks:
             cur_pos -= 1
         return cur_pos + 1
 
-    def find_free_big_enough(self, size: int, search_end: int) -> int:
-        for cur_pos in sorted(_ for _ in self._empty if _ < search_end):
+    def find_free_big_enough(self, size: int) -> int:
+        for cur_pos in self._empty:
             if _get_free_space_size(self._raw, cur_pos) >= size:
-                assert isinstance(cur_pos, int)
                 return cur_pos
         return len(self._raw)
 
@@ -112,7 +115,7 @@ def _move_b(data: list[int]) -> None:
     while end_pos > 0:
         start_pos = blocks.file_begin(end_pos)
         file_size = end_pos - start_pos + 1
-        free_pos = blocks.find_free_big_enough(file_size, start_pos)
+        free_pos = blocks.find_free_big_enough(file_size)
         if free_pos < start_pos:
             blocks.move_file(start_pos, file_size, free_pos)
 
