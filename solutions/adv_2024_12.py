@@ -30,8 +30,6 @@ _COMPS = {
     _SE: [_S, _E],
 }
 
-_DDIRS = list(_COMPS.keys())
-
 
 def _parse_input(in_str: str) -> Garden:
     res = {}
@@ -69,15 +67,14 @@ def _full_region(garden: Garden, start_pos: Pos) -> set[Pos]:
         if cur_pos in visited:
             continue
         visited.add(cur_pos)
-        for _ in _DIRS:
-            new_pos = _shift(cur_pos, _)
-            if (
-                new_pos in garden
-                and garden[new_pos] == garden[start_pos]
-                and new_pos not in visited
-            ):
+        for new_pos in (_shift(cur_pos, _) for _ in _DIRS):
+            if garden.get(new_pos, "") == garden[start_pos] and new_pos not in visited:
                 active.append(new_pos)
     return visited
+
+
+def _find_area(garden: Garden, start_pos: Pos) -> int:
+    return len(_full_region(garden, start_pos))
 
 
 def _find_all_edges(garden: Garden, start_pos: Pos) -> set[frozenset[Pos]]:
@@ -90,16 +87,24 @@ def _find_all_edges(garden: Garden, start_pos: Pos) -> set[frozenset[Pos]]:
     return {_k for _k, _v in edges_count.items() if _v == 1}
 
 
+def _find_perimeter(garden: Garden, start_pos: Pos) -> int:
+    return len(_find_all_edges(garden, start_pos))
+
+
+def _get_at_shifted(garden: Garden, pos: Pos, in_dir: Pos) -> str:
+    return garden.get(_shift(pos, in_dir), "")
+
+
 def _is_convex_corner(garden: Garden, pos: Pos, in_dir: Pos) -> bool:
     cur_char = garden[pos]
-    return all(garden.get(_shift(pos, _), "") != cur_char for _ in _COMPS[in_dir])
+    return all(_get_at_shifted(garden, pos, _) != cur_char for _ in _COMPS[in_dir])
 
 
 def _is_concave_corner(garden: Garden, pos: Pos, in_dir: Pos) -> bool:
     cur_char = garden[pos]
-    if garden.get(_shift(pos, in_dir), "") == cur_char:
+    if _get_at_shifted(garden, pos, in_dir) == cur_char:
         return False
-    return all(garden.get(_shift(pos, _), "") == cur_char for _ in _COMPS[in_dir])
+    return all(_get_at_shifted(garden, pos, _) == cur_char for _ in _COMPS[in_dir])
 
 
 def _is_corner(garden: Garden, pos: Pos, in_dir: Pos) -> bool:
@@ -108,16 +113,8 @@ def _is_corner(garden: Garden, pos: Pos, in_dir: Pos) -> bool:
     )
 
 
-def _find_perimeter(garden: Garden, start_pos: Pos) -> int:
-    return len(_find_all_edges(garden, start_pos))
-
-
-def _find_area(garden: Garden, start_pos: Pos) -> int:
-    return len(_full_region(garden, start_pos))
-
-
 def _count_corners_at_pos(garden: Garden, pos: Pos) -> int:
-    return sum(1 for cur_dir in _DDIRS if _is_corner(garden, pos, cur_dir))
+    return sum(1 for cur_dir in _COMPS if _is_corner(garden, pos, cur_dir))
 
 
 def _find_corners(garden: Garden, start_pos: Pos) -> int:
@@ -130,10 +127,10 @@ def _compute_components(garden: Garden) -> list[set[Pos]]:
     start_positions = set(garden.keys())
     res = []
     while start_positions:
-        cur_start = start_positions.pop()
+        cur_start = next(iter(start_positions))
         cur_component = _full_region(garden, cur_start)
         res.append(cur_component)
-        assert cur_component <= start_positions | {cur_start}
+        assert cur_component <= start_positions
         start_positions -= cur_component
     return res
 
