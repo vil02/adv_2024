@@ -14,6 +14,7 @@ _INPUTS = tu.get_inputs(
         "r_small",
         "r2_small",
         "r3_small",
+        "r4_small",
     },
 )
 
@@ -33,5 +34,6 @@ test_solve_b = _INPUTS.get_test(
         "r_small": 300,
         "r2_small": 946,
         "r3_small": 307122,
+        "r4_small": 664,
     },
 )
