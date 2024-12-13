@@ -1,7 +1,9 @@
 import typing
+import math
 
 Pos = tuple[int, int]
 Garden = dict[Pos, str]
+Region = set[Pos]
 
 
 def _shift(pos: Pos, shift: Pos) -> Pos:
@@ -40,26 +42,7 @@ def _parse_input(in_str: str) -> Garden:
     return res
 
 
-def _expand_pos(in_pos: Pos) -> Pos:
-    return 2 * in_pos[0], 2 * in_pos[1]
-
-
-def _get_all_edges(in_pos: Pos) -> list[frozenset[Pos]]:
-    pos = _expand_pos(in_pos)
-    ne = _shift(pos, _NE)
-    nw = _shift(pos, _NW)
-    se = _shift(pos, _SE)
-    sw = _shift(pos, _SW)
-
-    return [
-        frozenset({ne, nw}),
-        frozenset({nw, sw}),
-        frozenset({sw, se}),
-        frozenset({se, ne}),
-    ]
-
-
-def _full_region(garden: Garden, start_pos: Pos) -> set[Pos]:
+def _full_region(garden: Garden, start_pos: Pos) -> Region:
     visited = set()
     active = [start_pos]
     while active:
@@ -73,57 +56,51 @@ def _full_region(garden: Garden, start_pos: Pos) -> set[Pos]:
     return visited
 
 
-def _find_area(garden: Garden, start_pos: Pos) -> int:
-    return len(_full_region(garden, start_pos))
+def _area(region: Region) -> int:
+    return len(region)
 
 
-def _find_all_edges(garden: Garden, start_pos: Pos) -> set[frozenset[Pos]]:
-    edges_count: dict[frozenset[Pos], int] = {}
-
-    for _ in _full_region(garden, start_pos):
-        for edge in _get_all_edges(_):
-            edges_count[edge] = edges_count.get(edge, 0) + 1
-
-    return {_k for _k, _v in edges_count.items() if _v == 1}
+def _count_visited_neighbors(visited: Region, pos: Pos) -> int:
+    return sum(1 for cur_dir in _DIRS if _shift(pos, cur_dir) in visited)
 
 
-def _find_perimeter(garden: Garden, start_pos: Pos) -> int:
-    return len(_find_all_edges(garden, start_pos))
+def _perimeter(region: Region) -> int:
+    res = 0
+    visited: Region = set()
+    for _ in region:
+        res_change = {0: 4, 1: 2, 2: 0, 3: -2, 4: -4}
+        res += res_change[_count_visited_neighbors(visited, _)]
+        visited.add(_)
+    return res
 
 
-def _get_at_shifted(garden: Garden, pos: Pos, in_dir: Pos) -> str:
-    return garden.get(_shift(pos, in_dir), "")
+def _is_convex_corner(region: Region, pos: Pos, in_dir: Pos) -> bool:
+    assert pos in region
+    return all(_shift(pos, _) not in region for _ in _COMPS[in_dir])
 
 
-def _is_convex_corner(garden: Garden, pos: Pos, in_dir: Pos) -> bool:
-    cur_char = garden[pos]
-    return all(_get_at_shifted(garden, pos, _) != cur_char for _ in _COMPS[in_dir])
-
-
-def _is_concave_corner(garden: Garden, pos: Pos, in_dir: Pos) -> bool:
-    cur_char = garden[pos]
-    if _get_at_shifted(garden, pos, in_dir) == cur_char:
+def _is_concave_corner(region: Region, pos: Pos, in_dir: Pos) -> bool:
+    assert pos in region
+    if _shift(pos, in_dir) in region:
         return False
-    return all(_get_at_shifted(garden, pos, _) == cur_char for _ in _COMPS[in_dir])
+    return all(_shift(pos, _) in region for _ in _COMPS[in_dir])
 
 
-def _is_corner(garden: Garden, pos: Pos, in_dir: Pos) -> bool:
-    return _is_concave_corner(garden, pos, in_dir) or _is_convex_corner(
-        garden, pos, in_dir
+def _is_corner(region: Region, pos: Pos, in_dir: Pos) -> bool:
+    return _is_concave_corner(region, pos, in_dir) or _is_convex_corner(
+        region, pos, in_dir
     )
 
 
-def _count_corners_at_pos(garden: Garden, pos: Pos) -> int:
-    return sum(1 for cur_dir in _COMPS if _is_corner(garden, pos, cur_dir))
+def _count_corners_at_pos(region: Region, pos: Pos) -> int:
+    return sum(1 for cur_dir in _COMPS if _is_corner(region, pos, cur_dir))
 
 
-def _find_corners(garden: Garden, start_pos: Pos) -> int:
-    return sum(
-        _count_corners_at_pos(garden, _) for _ in _full_region(garden, start_pos)
-    )
+def _corners(region: Region) -> int:
+    return sum(_count_corners_at_pos(region, _) for _ in region)
 
 
-def _compute_components(garden: Garden) -> list[set[Pos]]:
+def _compute_components(garden: Garden) -> list[Region]:
     start_positions = set(garden.keys())
     res = []
     while start_positions:
@@ -135,19 +112,23 @@ def _compute_components(garden: Garden) -> list[set[Pos]]:
     return res
 
 
-def _get_solve(
-    other_cost: typing.Callable[[Garden, Pos], int]
-) -> typing.Callable[[str], int]:
+Cost = typing.Callable[[Region], int]
+
+
+def _cost_of_region(costs: list[Cost], region: Region) -> int:
+    res = math.prod(_(region) for _ in costs)
+    assert isinstance(res, int)
+    return res
+
+
+def _get_solve(costs: list[Cost]) -> typing.Callable[[str], int]:
     def _solve(in_str: str) -> int:
-        garden = _parse_input(in_str)
-        res = 0
-        for _ in _compute_components(garden):
-            some_node = _.pop()
-            res += _find_area(garden, some_node) * other_cost(garden, some_node)
-        return res
+        return sum(
+            _cost_of_region(costs, _) for _ in _compute_components(_parse_input(in_str))
+        )
 
     return _solve
 
 
-solve_a = _get_solve(_find_perimeter)
-solve_b = _get_solve(_find_corners)
+solve_a = _get_solve([_area, _perimeter])
+solve_b = _get_solve([_area, _corners])
