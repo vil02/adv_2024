@@ -1,5 +1,4 @@
 import typing
-import heapq
 
 Pair = tuple[int, int]
 
@@ -29,21 +28,13 @@ _S = (0, 1)
 _W = (-1, 0)
 _E = (1, 0)
 
-_DIR_TO_NAME = {
-    _N: "N",
-    _S: "S",
-    _W: "W",
-    _E: "E",
-}
-
-_DIRS = list(_DIR_TO_NAME.keys())
+_DIRS = [_N, _S, _W, _E]
 
 
 def _shift(in_pos: Pair, shift: Pair) -> Pair:
     _x, _y = in_pos
     _sx, _sy = shift
-    res = _x + _sx, _y + _sy
-    return res
+    return _x + _sx, _y + _sy
 
 
 def _gen_positions(
@@ -55,33 +46,30 @@ def _gen_positions(
             yield new_pos
 
 
-def _dijkstra(walls: set[Pair], start: Pair) -> dict[Pair, tuple[int, Pair | None]]:
-    res: dict[Pair, tuple[int, Pair | None]] = {}
-    visited: set[Pair] = set()
-    active: list[tuple[int, Pair, Pair | None]] = []
-    heapq.heappush(active, (0, start, None))
+def _new_paths(
+    walls: set[Pair], visited: set[Pair], cur_path: list[Pair]
+) -> list[list[Pair]]:
+    cur_pos = cur_path[-1]
+    return [
+        cur_path + [new_pos]
+        for new_pos in _gen_positions(walls, cur_pos)
+        if new_pos not in visited
+    ]
+
+
+def _optimal_path(walls: set[Pair], start: Pair, end: Pair) -> list[Pair] | None:
+    """it is assumed that the maze has no loops"""
+    visited = set()
+    active = [[start]]
     while active:
-        cur_dist, cur_node, prev_node = heapq.heappop(active)
-        if cur_node in visited:
-            continue
-        visited.add(cur_node)
-        if cur_node not in res or cur_dist < res[cur_node][0]:
-            res[cur_node] = (cur_dist, prev_node)
-            for new_pos in _gen_positions(walls, cur_node):
-                if new_pos not in visited:
-                    heapq.heappush(active, (cur_dist + 1, new_pos, cur_node))
-    return res
-
-
-def _reconstruct_path(
-    path_data: dict[Pair, tuple[int, Pair | None]], end: Pair
-) -> list[Pair]:
-    res = [end]
-    cur_pos = end
-    while (prev_pos := path_data[cur_pos][1]) is not None:
-        res.append(prev_pos)
-        cur_pos = prev_pos
-    return res[::-1]
+        cur_path = active.pop()
+        cur_pos = cur_path[-1]
+        if cur_pos == end:
+            return cur_path
+        assert cur_pos not in visited
+        visited.add(cur_pos)
+        active += _new_paths(walls, visited, cur_path)
+    return None
 
 
 def _dist(pos_a: Pair, pos_b: Pair) -> int:
@@ -102,8 +90,8 @@ def _count_cheats(pos_path: list[Pair], cheat_size: int) -> int:
 def _get_solve(cheat_size: int) -> typing.Callable[[str], int]:
     def _solve(in_str: str) -> int:
         walls, start, end = _parse_input(in_str)
-        path_data = _dijkstra(walls, start)
-        pos_path = _reconstruct_path(path_data, end)
+        pos_path = _optimal_path(walls, start, end)
+        assert pos_path is not None
         assert pos_path[0] == start
         assert pos_path[-1] == end
         return _count_cheats(pos_path, cheat_size)
