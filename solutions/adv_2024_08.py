@@ -58,7 +58,7 @@ def _get_antinodes_b(pos_a: Pair, pos_b: Pair, limits: Pair) -> PosSet:
 
 
 def _get_all_antinodes(
-    get_antinodes: typing.Callable[[Pair, Pair, Pair], PosSet]
+    get_antinodes: typing.Callable[[Pair, Pair, Pair], PosSet],
 ) -> typing.Callable[[PosSet, Pair], PosSet]:
     def _all_antinodes(positions: PosSet, limits: Pair) -> PosSet:
         return {
@@ -71,7 +71,7 @@ def _get_all_antinodes(
 
 
 def _get_solve(
-    all_antinodes: typing.Callable[[PosSet, Pair], PosSet]
+    all_antinodes: typing.Callable[[PosSet, Pair], PosSet],
 ) -> typing.Callable[[str], int]:
     def _solve(in_str: str) -> int:
         data, limits = _parse_input(in_str)

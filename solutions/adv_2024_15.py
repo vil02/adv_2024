@@ -87,7 +87,7 @@ def _move_robot_a(mut_map: Map, robot_pos: Pair, in_dir: Pair) -> Pair:
 
 
 def _get_make_all_moves(
-    move_robot: typing.Callable[[Map, Pair, Pair], Pair]
+    move_robot: typing.Callable[[Map, Pair, Pair], Pair],
 ) -> typing.Callable[[Map, Pair, list[Pair]], None]:
     def _make_all_moves(mut_map: Map, robot_pos: Pair, moves: list[Pair]) -> None:
         cur_robot_pos = robot_pos

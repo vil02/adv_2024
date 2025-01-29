@@ -34,7 +34,7 @@ def is_safe_b(in_list: list[int]) -> bool:
 
 
 def _get_solve(
-    is_safe: typing.Callable[[list[int]], bool]
+    is_safe: typing.Callable[[list[int]], bool],
 ) -> typing.Callable[[str], int]:
     def _solve(in_str: str) -> int:
         return _count_safe(_parse_input(in_str), is_safe)
