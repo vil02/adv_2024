@@ -84,7 +84,7 @@ def _append_with_a(seq: set[str]) -> set[str]:
 
 
 def _get_keypad_press_sequence(
-    keypad_sequences: typing.Callable[[str, str], set[str]]
+    keypad_sequences: typing.Callable[[str, str], set[str]],
 ) -> typing.Callable[[str], set[str]]:
     def _keypad_press_sequence(keys: str) -> set[str]:
         res = {""}

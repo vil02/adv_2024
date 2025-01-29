@@ -82,7 +82,7 @@ can_be_true_b = _get_can_be_true([_Plus, _Multip, _Concat])
 
 
 def _get_solve(
-    can_be_true: typing.Callable[[Equation], bool]
+    can_be_true: typing.Callable[[Equation], bool],
 ) -> typing.Callable[[str], int]:
     def _solve(in_str: str) -> int:
         return sum(_.result for _ in _parse_input(in_str) if can_be_true(_))

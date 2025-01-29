@@ -19,7 +19,7 @@ def _parse_input(in_str: str) -> list[tuple[Pair, Pair]]:
 
 
 def _to_positions_and_vels(
-    data: list[tuple[Pair, Pair]]
+    data: list[tuple[Pair, Pair]],
 ) -> tuple[list[Pair], list[Pair]]:
     positions = [_[0] for _ in data]
     vels = [_[1] for _ in data]

@@ -73,7 +73,7 @@ def _count_trailheads_b(height_map: HeightMap, start_pos: Pos) -> int:
 
 
 def _get_solve(
-    count_trailheads: typing.Callable[[HeightMap, Pos], int]
+    count_trailheads: typing.Callable[[HeightMap, Pos], int],
 ) -> typing.Callable[[str], int]:
     def _solve(in_str: str) -> int:
         height_map, starts = _parse_input(in_str)
