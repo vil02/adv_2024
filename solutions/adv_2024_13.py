@@ -1,3 +1,4 @@
+import typing
 import numpy
 
 Prize = tuple[int, int]
@@ -37,7 +38,9 @@ def _parse_input(in_str: str) -> list[Machine]:
 
 
 def _total_shift(in_button: Button, moves: int) -> tuple[int, int]:
-    return tuple(moves * _ for _ in in_button)
+    res = tuple(moves * _ for _ in in_button)
+    assert len(res) == 2
+    return res
 
 
 def _add_shifts(pos_a: tuple[int, int], pos_b: tuple[int, int]) -> tuple[int, int]:
@@ -76,9 +79,16 @@ def _update_machine(in_machine: Machine) -> Machine:
     return button_a, button_b, _update_prize(prize)
 
 
+def _filter_finite_costs(machines: list[Machine]) -> typing.Generator[int, None, None]:
+    for _ in machines:
+        cur_cost = _minimal_num_of_moves(_)
+        if cur_cost < numpy.inf:
+            assert isinstance(cur_cost, int)
+            yield cur_cost
+
+
 def _find_minimal_cost_of_wining_all(machines: list[Machine]) -> int:
-    costs = (_minimal_num_of_moves(_) for _ in machines)
-    return sum(_ for _ in costs if _ < numpy.inf)
+    return sum(_filter_finite_costs(machines))
 
 
 def solve_a(in_str: str) -> int:
