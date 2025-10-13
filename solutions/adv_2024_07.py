@@ -57,9 +57,9 @@ class _Simplification(typing.NamedTuple):
     simplify: typing.Callable[[Equation], Equation]
 
 
-_Plus = _Simplification(_can_be_simplified_add, _simplify_eq_add)
-_Multip = _Simplification(_can_be_simplified_multip, _simplify_eq_multip)
-_Concat = _Simplification(_can_be_simplified_concat, _simplify_eq_concat)
+_PLUS = _Simplification(_can_be_simplified_add, _simplify_eq_add)
+_MULTIP = _Simplification(_can_be_simplified_multip, _simplify_eq_multip)
+_CONCAT = _Simplification(_can_be_simplified_concat, _simplify_eq_concat)
 
 
 def _get_can_be_true(
@@ -77,8 +77,8 @@ def _get_can_be_true(
     return _can_be_true
 
 
-can_be_true_a = _get_can_be_true([_Plus, _Multip])
-can_be_true_b = _get_can_be_true([_Plus, _Multip, _Concat])
+can_be_true_a = _get_can_be_true([_PLUS, _MULTIP])
+can_be_true_b = _get_can_be_true([_PLUS, _MULTIP, _CONCAT])
 
 
 def _get_solve(
