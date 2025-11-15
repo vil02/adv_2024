@@ -6,5 +6,3 @@
 [![codecov](https://codecov.io/gh/vil02/adv_2024/graph/badge.svg?token=dVclfPcr2j)](https://codecov.io/gh/vil02/adv_2024)
 
 Python solutions of [Advent of Code 2024](https://adventofcode.com/2024).
-
-[![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)](https://gitpod.io/#https://github.com/vil02/adv_2024)
