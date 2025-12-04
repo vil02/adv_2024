@@ -7,18 +7,23 @@ from . import test_utils as tu
 _INPUTS = tu.get_inputs(18, {"small", "p"})
 
 
+def _parse(in_input: str | None) -> list[sol.Pair]:
+    assert isinstance(in_input, str)
+    return sol.parse_input(in_input)
+
+
 @pytest.mark.parametrize(
     ("walls", "limits", "start_pos", "end_pos", "expected"),
     [
         (
-            set(sol.parse_input(_INPUTS.inputs["small"])[0:12]),
+            set(_parse(_INPUTS.inputs["small"])[0:12]),
             (7, 7),
             (0, 0),
             (6, 6),
             22,
         ),
         (
-            set(sol.parse_input(_INPUTS.inputs["p"])[0 : sol.TRUNC]),
+            set(_parse(_INPUTS.inputs["p"])[0 : sol.TRUNC]),
             sol.LIMITS,
             sol.START_POS,
             sol.END_POS,
@@ -40,14 +45,14 @@ def test_find_shortest_path(
     ("wall_list", "limits", "start_pos", "end_pos", "expected"),
     [
         (
-            sol.parse_input(_INPUTS.inputs["small"]),
+            _parse(_INPUTS.inputs["small"]),
             (7, 7),
             (0, 0),
             (6, 6),
             (6, 1),
         ),
         (
-            sol.parse_input(_INPUTS.inputs["p"]),
+            _parse(_INPUTS.inputs["p"]),
             sol.LIMITS,
             sol.START_POS,
             sol.END_POS,
