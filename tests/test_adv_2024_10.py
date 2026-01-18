@@ -1,7 +1,6 @@
 import solutions.adv_2024_10 as sol
 from . import test_utils as tu
 
-
 _INPUTS = tu.get_inputs(10, {"small", "p", "r"})
 
 test_solve_a, test_solve_b = _INPUTS.get_tests(
