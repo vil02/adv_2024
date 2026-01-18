@@ -2,7 +2,6 @@ import typing
 import functools
 import itertools
 
-
 Keypad = dict[str, dict[str, str]]
 
 
