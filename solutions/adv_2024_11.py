@@ -6,7 +6,7 @@ def _parse_input(in_str: str) -> list[int]:
     return [int(_) for _ in in_str.split()]
 
 
-@functools.lru_cache(maxsize=None)
+@functools.cache
 def _number_of_stones_produced(in_num: int, number_of_blinks: int) -> int:
     assert number_of_blinks >= 0
     if number_of_blinks == 0:

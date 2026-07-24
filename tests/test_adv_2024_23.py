@@ -1,4 +1,5 @@
 import solutions.adv_2024_23 as sol
+
 from . import test_utils as tu
 
 _INPUTS = tu.get_inputs(23, {"small", "p"})

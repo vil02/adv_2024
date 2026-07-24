@@ -1,7 +1,7 @@
-import typing
+import functools
 import heapq
 import math
-import functools
+import typing
 
 Pair = tuple[int, int]
 
