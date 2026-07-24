@@ -30,7 +30,7 @@ def _remove(in_list: list[int], in_pos: int) -> list[int]:
 
 
 def is_safe_b(in_list: list[int]) -> bool:
-    return any(is_safe_a(_remove(in_list, _)) for _ in range(0, len(in_list)))
+    return any(is_safe_a(_remove(in_list, _)) for _ in range(len(in_list)))
 
 
 def _get_solve(

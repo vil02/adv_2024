@@ -1,6 +1,7 @@
 import pytest
 
 import solutions.adv_2024_21 as sol
+
 from . import test_utils as tu
 
 

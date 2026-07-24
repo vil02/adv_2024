@@ -1,6 +1,7 @@
 import pytest
 
 import solutions.adv_2024_11 as sol
+
 from . import test_utils as tu
 
 _SMALL = [125, 17]

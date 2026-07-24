@@ -1,4 +1,5 @@
 import typing
+
 import numpy
 
 Prize = tuple[int, int]
@@ -62,8 +63,8 @@ def _minimal_num_of_moves(in_machine: Machine) -> int | float:
     prize_matrix = numpy.array([[prize[0]], [prize[1]]])
     solution = numpy.linalg.solve(button_matrix, prize_matrix)
 
-    moves_a = int(round(solution[0].item()))
-    moves_b = int(round(solution[1].item()))
+    moves_a = round(solution[0].item())
+    moves_b = round(solution[1].item())
     if _is_valid(in_machine, moves_a, moves_b):
         return 3 * moves_a + moves_b
     return numpy.inf

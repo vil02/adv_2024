@@ -1,5 +1,5 @@
-import math
 import functools
+import math
 
 
 def _parse_input(in_str: str) -> list[int]:

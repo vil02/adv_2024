@@ -1,5 +1,5 @@
-import typing
 import math
+import typing
 
 Pos = tuple[int, int]
 Garden = dict[Pos, str]

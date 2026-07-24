@@ -1,6 +1,6 @@
-import typing
 import functools
 import itertools
+import typing
 
 Keypad = dict[str, dict[str, str]]
 
@@ -41,7 +41,7 @@ _NEGATE_DIR = {
 
 
 def _does_make_sense(path: str) -> bool:
-    moves = set(_ for _ in path)
+    moves = set(path)
     return all(_NEGATE_DIR[_] not in moves for _ in moves)
 
 

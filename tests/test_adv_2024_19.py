@@ -1,6 +1,7 @@
 import pytest
 
 import solutions.adv_2024_19 as sol
+
 from . import test_utils as tu
 
 _AVAILABLE = frozenset({"r", "wr", "b", "g", "bwu", "rb", "gb", "br"})

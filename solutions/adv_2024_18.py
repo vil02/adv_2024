@@ -1,5 +1,5 @@
-import typing
 import heapq
+import typing
 
 Pair = tuple[int, int]
 
